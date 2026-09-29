@@ -9,7 +9,7 @@ const CreateNew = ({ addNew }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    addNew({ content: content.value, author: author.value, info: info.value, votes: 0 })
+    addNew({ content: content.get.value, author: author.get.value, info: info.get.value, votes: 0 })
     navigate("/")
   }
 
@@ -25,15 +25,15 @@ const CreateNew = ({ addNew }) => {
       <form onSubmit={handleSubmit}>
         <div>
           content
-          <input {...content} />
+          <input {...content.get} />
         </div>
         <div>
           author
-          <input {...author} />
+          <input {...author.get} />
         </div>
         <div>
           url for more info
-          <input {...info} />
+          <input {...info.get} />
         </div>
         <button>create</button>
         <button type="button" onClick={resetFields}>reset</button>
