@@ -1,15 +1,17 @@
 import { useNavigate } from "react-router-dom"
-import { useField } from '../hooks'
+import { useField, useAnecdotes } from '../hooks'
 
-const CreateNew = ({ addNew }) => {
+const CreateNew = () => {
+  const { addAnecdote } = useAnecdotes()
+
   const content = useField('text')
   const author = useField('text')
   const info = useField('text')
   const navigate = useNavigate()
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
-    addNew({ content: content.get.value, author: author.get.value, info: info.get.value, votes: 0 })
+    await addAnecdote({ content: content.get.value, author: author.get.value, info: info.get.value, votes: 0 })
     navigate("/")
   }
 
