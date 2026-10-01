@@ -1,14 +1,15 @@
 import { Container, AppBar, Toolbar, Button, Typography, Box } from '@mui/material'
 import { useEffect } from 'react'
-import { useBlogActions, useBlogs } from './stores/blogStore'
+import { useBlogActions } from './stores/blogStore'
 import { useUser, useUserActions } from './stores/userStore'
 
-import { Routes, Route, Link, Navigate, useMatch } from 'react-router-dom'
+import { Routes, Route, Link, Navigate } from 'react-router-dom'
 
 import LoginForm from './components/LoginForm'
 import Blog from './components/Blog'
 import BlogList from './components/BlogList'
 import BlogForm from './components/BlogForm'
+import User from './components/User'
 import UserList from './components/UserList'
 import Notification from './components/Notification'
 import ErrorBoundary from './components/ErrorBoundary'
@@ -17,7 +18,6 @@ const App = () => {
   const user = useUser()
   const { login, logout, initialize: initializeUsers } = useUserActions()
   const { initialize: initializeBlogs } = useBlogActions()
-  const blogs = useBlogs()
 
   useEffect(() => {
     initializeBlogs()
@@ -28,9 +28,6 @@ const App = () => {
     event.preventDefault()
     logout()
   }
-
-  const match = useMatch('/blogs/:id')
-  const blog = match ? blogs.find((blog) => blog.id === match.params.id) : null
 
   const style = { '&:hover': { bgcolor: 'rgba(255,255,255,0.3)' } }
 
@@ -73,8 +70,9 @@ const App = () => {
               element={user ? <Navigate replace to="/" /> : <LoginForm handleLogin={login} />}
             />
             <Route path="/create" element={user ? <BlogForm /> : <Navigate replace to="/" />} />
-            <Route path="/blogs/:id" element={<Blog blog={blog} />} />
+            <Route path="/blogs/:id" element={<Blog />} />
             <Route path="/users" element={<UserList />} />
+            <Route path="/users/:id" element={<User />} />
             <Route path="/*" element={<h2>404 Page Not Found</h2>} />
           </Routes>
         </Box>

@@ -1,9 +1,11 @@
 import { Typography, Button, Stack, Card } from '@mui/material'
-import { useNavigate } from 'react-router-dom'
-import { useBlogActions } from '../stores/blogStore'
+import { useNavigate, useParams } from 'react-router-dom'
+import { useBlogActions, useBlogs } from '../stores/blogStore'
 import { useUser } from '../stores/userStore'
 
-const Blog = ({ blog }) => {
+const Blog = () => {
+  const { id } = useParams()
+  const blog = useBlogs().find((b) => b.id === id)
   const { like, remove } = useBlogActions()
   const user = useUser()
   const navigate = useNavigate()

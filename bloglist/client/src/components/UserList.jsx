@@ -1,6 +1,7 @@
 import { Typography } from '@mui/material'
 import { useUsers } from '../stores/userStore'
 import { useBlogs } from '../stores/blogStore'
+import { Link } from 'react-router-dom'
 
 const UserList = () => {
   const users = useUsers()
@@ -20,7 +21,9 @@ const UserList = () => {
         <tbody>
           {users.map((user) => (
             <tr key={user.id}>
-              <td>{user.name}</td>
+              <td>
+                <Link to={`/users/${user.id}`}>{user.name}</Link>
+              </td>
               <td>{user.username}</td>
               <td>{blogs.filter((b) => b.user.id === user.id).length}</td>
             </tr>
