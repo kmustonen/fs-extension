@@ -1,5 +1,6 @@
 import { Container, AppBar, Toolbar, Button, Typography, Box } from '@mui/material'
 import { useState, useEffect } from 'react'
+import { useSetNotification } from './store'
 
 import blogService from './services/blogs'
 import loginService from './services/login'
@@ -17,7 +18,6 @@ const App = () => {
   const navigate = useNavigate()
 
   const [blogs, setBlogs] = useState([])
-  const [message, setMessage] = useState({ message: null, status: null })
   const [user, setUser] = useState(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedBloglistappUser')
     if (!loggedUserJSON) return null
@@ -25,6 +25,7 @@ const App = () => {
     blogService.setToken(user.token)
     return user
   })
+  const setNotification = useSetNotification()
 
   useEffect(() => {
     blogService.getAll().then((blogs) =>
@@ -36,13 +37,6 @@ const App = () => {
     )
   }, [])
 
-  const sendNotification = async (message, status) => {
-    setMessage({ message: message, status: status })
-    setTimeout(() => {
-      setMessage({ message: null, status: null })
-    }, 5000)
-  }
-
   const handleLogin = async ({ username, password }) => {
     try {
       const user = await loginService.login({ username, password })
@@ -52,7 +46,7 @@ const App = () => {
       setUser(user)
       return true
     } catch {
-      sendNotification('wrong username or password', 'error')
+      setNotification('wrong username or password', 'error')
       return false
     }
   }
@@ -67,13 +61,10 @@ const App = () => {
     try {
       const returnedBlog = await blogService.create(blogObject)
       setBlogs(blogs.concat({ ...returnedBlog, user }))
-      sendNotification(
-        `a new blog ${blogObject.title} by ${blogObject.author} was added`,
-        'success'
-      )
+      setNotification(`a new blog ${blogObject.title} by ${blogObject.author} was added`, 'success')
       navigate('/')
     } catch {
-      sendNotification('error in adding new blog', 'error')
+      setNotification('error in adding new blog', 'error')
     }
   }
 
@@ -93,7 +84,7 @@ const App = () => {
   const handleRemove = async (blogObject) => {
     if (window.confirm(`remove blog ${blogObject.title} by ${blogObject.author}`)) {
       await blogService.remove(blogObject)
-      sendNotification(`blog ${blogObject.title} by ${blogObject.author} was removed`, 'success')
+      setNotification(`blog ${blogObject.title} by ${blogObject.author} was removed`, 'success')
       const updatedBlogs = await blogService.getAll()
       setBlogs(
         updatedBlogs.sort(function (a, b) {
@@ -136,7 +127,7 @@ const App = () => {
         </Toolbar>
       </AppBar>
       <ErrorBoundary>
-        <Notification message={message.message} status={message.status} />
+        <Notification />
         <Box sx={{ p: 2 }}>
           <Routes>
             <Route path="/" element={<BlogList blogs={blogs} user={user} />} />
