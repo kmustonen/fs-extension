@@ -1,10 +1,7 @@
 import { Container, AppBar, Toolbar, Button, Typography, Box } from '@mui/material'
-import { useState, useEffect } from 'react'
-import { useSetNotification } from './stores/notificationStore'
+import { useEffect } from 'react'
 import { useBlogActions, useBlogs } from './stores/blogStore'
-
-import blogService from './services/blogs'
-import loginService from './services/login'
+import { useUser, useUserActions } from './stores/userStore'
 
 import { Routes, Route, Link, Navigate, useMatch, useNavigate } from 'react-router-dom'
 
@@ -18,14 +15,8 @@ import ErrorBoundary from './components/ErrorBoundary'
 const App = () => {
   const navigate = useNavigate()
 
-  const [user, setUser] = useState(() => {
-    const loggedUserJSON = window.localStorage.getItem('loggedBloglistappUser')
-    if (!loggedUserJSON) return null
-    const user = JSON.parse(loggedUserJSON)
-    blogService.setToken(user.token)
-    return user
-  })
-  const setNotification = useSetNotification()
+  const user = useUser()
+  const { login, logout } = useUserActions()
   const { initialize, create, like, remove } = useBlogActions()
   const blogs = useBlogs()
 
@@ -33,24 +24,9 @@ const App = () => {
     initialize()
   }, [initialize])
 
-  const handleLogin = async ({ username, password }) => {
-    try {
-      const user = await loginService.login({ username, password })
-      window.localStorage.setItem('loggedBloglistappUser', JSON.stringify(user))
-
-      blogService.setToken(user.token)
-      setUser(user)
-      return true
-    } catch {
-      setNotification('wrong username or password', 'error')
-      return false
-    }
-  }
-
-  const handleLogout = async (event) => {
+  const handleLogout = (event) => {
     event.preventDefault()
-    window.localStorage.removeItem('loggedBloglistappUser')
-    setUser(null)
+    logout()
   }
 
   const createBlog = async (blog) => {
@@ -106,7 +82,7 @@ const App = () => {
             <Route path="/" element={<BlogList blogs={blogs} user={user} />} />
             <Route
               path="/login"
-              element={user ? <Navigate replace to="/" /> : <LoginForm handleLogin={handleLogin} />}
+              element={user ? <Navigate replace to="/" /> : <LoginForm handleLogin={login} />}
             />
             <Route
               path="/create"
