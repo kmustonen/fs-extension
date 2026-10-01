@@ -13,6 +13,7 @@ import Blog from './components/Blog'
 import BlogList from './components/BlogList'
 import BlogForm from './components/BlogForm'
 import Notification from './components/Notification'
+import ErrorBoundary from './components/ErrorBoundary'
 
 const App = () => {
   const navigate = useNavigate()
@@ -29,12 +30,12 @@ const App = () => {
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
-      setBlogs(blogs.sort(function(a,b) {return b.likes - a.likes})))
+      setBlogs(blogs.sort(function (a, b) { return b.likes - a.likes })))
   }, [])
 
   const sendNotification = async (message, status) => {
     setMessage({ message: message, status: status })
-    setTimeout(() => {setMessage({ message: null, status: null })}, 5000)
+    setTimeout(() => { setMessage({ message: null, status: null }) }, 5000)
   }
 
   const handleLogin = async ({ username, password }) => {
@@ -73,7 +74,7 @@ const App = () => {
     await blogService.update(blogObject)
 
     blogService.getAll().then(blogs =>
-      setBlogs( blogs.sort(function(a,b) {return b.likes - a.likes}) )
+      setBlogs(blogs.sort(function (a, b) { return b.likes - a.likes }))
     )
   }
 
@@ -82,7 +83,7 @@ const App = () => {
       await blogService.remove(blogObject)
       sendNotification(`blog ${blogObject.title} by ${blogObject.author} was removed`, 'success')
       const updatedBlogs = await blogService.getAll()
-      setBlogs( updatedBlogs.sort(function(a,b) {return b.likes - a.likes}))
+      setBlogs(updatedBlogs.sort(function (a, b) { return b.likes - a.likes }))
       navigate('/')
     }
   }
@@ -107,34 +108,36 @@ const App = () => {
           </div>
         </Toolbar>
       </AppBar>
-      <Notification message={message.message} status={message.status} />
-      <Box sx={{ p: 2 }}>
-        <Routes>
-          <Route path="/" element={
-            <BlogList
-              blogs={blogs}
-              user={user}/>
-          }/>
-          <Route path="/login" element={
-            user
-              ? <Navigate replace to="/" />
-              : <LoginForm handleLogin={handleLogin} />
-          }/>
-          <Route path="/create" element={
-            user
-              ? <BlogForm createBlog={createBlog} />
-              : <Navigate replace to="/"/>
-          }/>
-          <Route path="/blogs/:id" element={
-            <Blog
-              blog={blog}
-              user={user}
-              handleLike={handleLike}
-              handleRemove={handleRemove}
-            />
-          } />
-        </Routes>
-      </Box>
+      <ErrorBoundary>
+        <Notification message={message.message} status={message.status} />
+        <Box sx={{ p: 2 }}>
+          <Routes>
+            <Route path="/" element={
+              <BlogList
+                blogs={blogs}
+                user={user} />
+            } />
+            <Route path="/login" element={
+              user
+                ? <Navigate replace to="/" />
+                : <LoginForm handleLogin={handleLogin} />
+            } />
+            <Route path="/create" element={
+              user
+                ? <BlogForm createBlog={createBlog} />
+                : <Navigate replace to="/" />
+            } />
+            <Route path="/blogs/:id" element={
+              <Blog
+                blog={blog}
+                user={user}
+                handleLike={handleLike}
+                handleRemove={handleRemove}
+              />
+            } />
+          </Routes>
+        </Box>
+      </ErrorBoundary>
     </Container>
   )
 }
