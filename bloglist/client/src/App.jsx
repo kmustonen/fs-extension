@@ -1,6 +1,7 @@
 import { Container, AppBar, Toolbar, Button, Typography, Box } from '@mui/material'
 import { useState, useEffect } from 'react'
-import { useSetNotification } from './store'
+import { useSetNotification } from './stores/notificationStore'
+import { useBlogActions, useBlogs } from './stores/blogStore'
 
 import blogService from './services/blogs'
 import loginService from './services/login'
@@ -17,7 +18,6 @@ import ErrorBoundary from './components/ErrorBoundary'
 const App = () => {
   const navigate = useNavigate()
 
-  const [blogs, setBlogs] = useState([])
   const [user, setUser] = useState(() => {
     const loggedUserJSON = window.localStorage.getItem('loggedBloglistappUser')
     if (!loggedUserJSON) return null
@@ -26,16 +26,12 @@ const App = () => {
     return user
   })
   const setNotification = useSetNotification()
+  const { initialize, create, like, remove } = useBlogActions()
+  const blogs = useBlogs()
 
   useEffect(() => {
-    blogService.getAll().then((blogs) =>
-      setBlogs(
-        blogs.sort(function (a, b) {
-          return b.likes - a.likes
-        })
-      )
-    )
-  }, [])
+    initialize()
+  }, [initialize])
 
   const handleLogin = async ({ username, password }) => {
     try {
@@ -57,40 +53,17 @@ const App = () => {
     setUser(null)
   }
 
-  const createBlog = async (blogObject) => {
-    try {
-      const returnedBlog = await blogService.create(blogObject)
-      setBlogs(blogs.concat({ ...returnedBlog, user }))
-      setNotification(`a new blog ${blogObject.title} by ${blogObject.author} was added`, 'success')
-      navigate('/')
-    } catch {
-      setNotification('error in adding new blog', 'error')
-    }
+  const createBlog = async (blog) => {
+    if (await create(blog, user)) navigate('/')
   }
 
-  const handleLike = async (blogObject) => {
-    blogObject = { ...blogObject, likes: blogObject.likes + 1 }
-    await blogService.update(blogObject)
-
-    blogService.getAll().then((blogs) =>
-      setBlogs(
-        blogs.sort(function (a, b) {
-          return b.likes - a.likes
-        })
-      )
-    )
+  const handleLike = async (blog) => {
+    await like(blog.id)
   }
 
-  const handleRemove = async (blogObject) => {
-    if (window.confirm(`remove blog ${blogObject.title} by ${blogObject.author}`)) {
-      await blogService.remove(blogObject)
-      setNotification(`blog ${blogObject.title} by ${blogObject.author} was removed`, 'success')
-      const updatedBlogs = await blogService.getAll()
-      setBlogs(
-        updatedBlogs.sort(function (a, b) {
-          return b.likes - a.likes
-        })
-      )
+  const handleRemove = async (blog) => {
+    if (window.confirm(`remove blog ${blog.title} by ${blog.author}`)) {
+      await remove(blog)
       navigate('/')
     }
   }
