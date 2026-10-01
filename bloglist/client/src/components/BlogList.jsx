@@ -1,4 +1,4 @@
-import { Typography } from '@mui/material'
+import { Typography, List, ListItem } from '@mui/material'
 
 import { Link } from 'react-router-dom'
 import { useBlogs } from '../stores/blogStore'
@@ -10,17 +10,17 @@ const BlogList = () => {
 
   return (
     <div>
-      {user && <p>{user.username} logged in</p>}
+      {user && <Typography gutterBottom>{user.username} logged in</Typography>}
       <Typography variant="h4">blogs</Typography>
-      <ul>
+      <List>
         {blogs.map((blog) => (
-          <li key={blog.id}>
+          <ListItem key={blog.id}>
             <Link to={`/blogs/${blog.id}`}>
               {blog.title} by {blog.author}
             </Link>
-          </li>
+          </ListItem>
         ))}
-      </ul>
+      </List>
     </div>
   )
 }

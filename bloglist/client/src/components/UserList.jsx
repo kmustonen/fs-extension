@@ -1,4 +1,13 @@
-import { Typography } from '@mui/material'
+import {
+  Typography,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper
+} from '@mui/material'
 import { useUsers } from '../stores/userStore'
 import { useBlogs } from '../stores/blogStore'
 import { Link } from 'react-router-dom'
@@ -10,26 +19,28 @@ const UserList = () => {
   return (
     <div>
       <Typography variant="h4">users</Typography>
-      <table>
-        <thead>
-          <tr>
-            <th>name</th>
-            <th>username</th>
-            <th>blogs created</th>
-          </tr>
-        </thead>
-        <tbody>
-          {users.map((user) => (
-            <tr key={user.id}>
-              <td>
-                <Link to={`/users/${user.id}`}>{user.name}</Link>
-              </td>
-              <td>{user.username}</td>
-              <td>{blogs.filter((b) => b.user.id === user.id).length}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      <TableContainer component={Paper} style={{ marginTop: 10, maxWidth: 600 }}>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell>name</TableCell>
+              <TableCell>username</TableCell>
+              <TableCell>blogs created</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {users.map((user) => (
+              <TableRow key={user.id}>
+                <TableCell>
+                  <Link to={`/users/${user.id}`}>{user.name}</Link>
+                </TableCell>
+                <TableCell>{user.username}</TableCell>
+                <TableCell>{blogs.filter((b) => b.user.id === user.id).length}</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
     </div>
   )
 }

@@ -1,4 +1,5 @@
 import React from 'react'
+import { Alert, Button, Typography } from '@mui/material'
 
 class ErrorBoundary extends React.Component {
   constructor(props) {
@@ -18,9 +19,17 @@ class ErrorBoundary extends React.Component {
     if (this.state.hasError) {
       return (
         <div>
-          <h2>Something went wrong.</h2>
-          <p>{this.state.error.message}</p>
-          <button onClick={() => this.setState({ hasError: false, error: null })}>try again</button>
+          <Typography variant="h4" gutterBottom>
+            Something went wrong.
+          </Typography>
+          <Alert severity="error">{this.state.error.message}</Alert>
+          <Button
+            variant="contained"
+            style={{ marginTop: 10 }}
+            onClick={() => this.setState({ hasError: false, error: null })}
+          >
+            try again
+          </Button>
         </div>
       )
     }

@@ -1,5 +1,14 @@
 import { useState } from 'react'
-import { Typography, Button, Stack, Card } from '@mui/material'
+import {
+  Typography,
+  Button,
+  Stack,
+  Card,
+  TextField,
+  List,
+  ListItem,
+  ListItemText
+} from '@mui/material'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useBlogActions, useBlogs } from '../stores/blogStore'
 import { useUser } from '../stores/userStore'
@@ -12,7 +21,7 @@ const Blog = () => {
   const navigate = useNavigate()
   const [newComment, setNewComment] = useState('')
 
-  if (!blog) return <h2>404 Page Not Found</h2>
+  if (!blog) return <Typography variant="h4">404 Page Not Found</Typography>
 
   const handleComment = async (e) => {
     e.preventDefault()
@@ -54,19 +63,23 @@ const Blog = () => {
         </div>
         <Typography variant="h6">comments</Typography>
         <form onSubmit={handleComment}>
-          <input
-            type="text"
-            aria-label="comment"
+          <TextField
+            label="comment"
             value={newComment}
             onChange={({ target }) => setNewComment(target.value)}
+            variant="standard"
           />
-          <button type="submit">add comment</button>
+          <Button type="submit" variant="contained" style={{ marginTop: 10, marginLeft: 10 }}>
+            add comment
+          </Button>
         </form>
-        <ul>
+        <List>
           {blog.comments.map((text, index) => (
-            <li key={index}>{text}</li>
+            <ListItem key={index} disablePadding>
+              <ListItemText primary={text} />
+            </ListItem>
           ))}
-        </ul>
+        </List>
       </Stack>
     </Card>
   )

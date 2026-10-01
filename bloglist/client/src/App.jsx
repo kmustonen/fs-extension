@@ -73,7 +73,7 @@ const App = () => {
             <Route path="/blogs/:id" element={<Blog />} />
             <Route path="/users" element={<UserList />} />
             <Route path="/users/:id" element={<User />} />
-            <Route path="/*" element={<h2>404 Page Not Found</h2>} />
+            <Route path="/*" element={<Typography variant="h4">404 Page Not Found</Typography>} />
           </Routes>
         </Box>
       </ErrorBoundary>
