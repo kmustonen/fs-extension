@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { Typography, Button, Stack, Card } from '@mui/material'
 import { useNavigate, useParams } from 'react-router-dom'
 import { useBlogActions, useBlogs } from '../stores/blogStore'
@@ -6,11 +7,21 @@ import { useUser } from '../stores/userStore'
 const Blog = () => {
   const { id } = useParams()
   const blog = useBlogs().find((b) => b.id === id)
-  const { like, remove } = useBlogActions()
+  const { like, remove, comment } = useBlogActions()
   const user = useUser()
   const navigate = useNavigate()
+  const [newComment, setNewComment] = useState('')
 
   if (!blog) return <h2>404 Page Not Found</h2>
+
+  const handleComment = async (e) => {
+    e.preventDefault()
+    const text = newComment
+    if (!text) return
+    if (await comment(blog.id, text)) {
+      setNewComment('')
+    }
+  }
 
   const handleRemove = async () => {
     if (window.confirm(`remove blog ${blog.title} by ${blog.author}`)) {
@@ -41,6 +52,20 @@ const Blog = () => {
             )}
           </Stack>
         </div>
+        <Typography variant="h6">comments</Typography>
+        <form onSubmit={handleComment}>
+          <input
+            type="text"
+            value={newComment}
+            onChange={({ target }) => setNewComment(target.value)}
+          />
+          <button type="submit">add comment</button>
+        </form>
+        <ul>
+          {blog.comments.map((text, index) => (
+            <li key={index}>{text}</li>
+          ))}
+        </ul>
       </Stack>
     </Card>
   )

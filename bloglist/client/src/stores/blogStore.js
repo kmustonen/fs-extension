@@ -31,6 +31,20 @@ const useBlogStore = create(
 
         set((state) => ({ blogs: state.blogs.map((a) => (a.id === id ? likedBlog : a)) }))
       },
+      comment: async (id, text) => {
+        try {
+          await blogService.comment({ id }, text)
+          set((state) => ({
+            blogs: state.blogs.map((a) =>
+              a.id === id ? { ...a, comments: a.comments.concat(text) } : a
+            )
+          }))
+          return true
+        } catch {
+          setNotification('error in adding comment', 'error')
+          return false
+        }
+      },
       initialize: async () => {
         const blogs = await blogService.getAll()
         set(() => ({ blogs }))
