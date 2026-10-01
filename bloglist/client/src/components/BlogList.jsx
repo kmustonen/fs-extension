@@ -11,7 +11,7 @@ const BlogList = () => {
   return (
     <div>
       {user && <p>{user.username} logged in</p>}
-      <Typography variant="h4">bloglist</Typography>
+      <Typography variant="h4">blogs</Typography>
       <ul>
         {blogs.map((blog) => (
           <li key={blog.id}>

@@ -38,7 +38,7 @@ const App = () => {
           <Typography variant="h4">blog app</Typography>
           <div>
             <Button color="inherit" component={Link} to="/" sx={style}>
-              home
+              blogs
             </Button>
             <Button color="inherit" component={Link} to="/users" sx={style}>
               users

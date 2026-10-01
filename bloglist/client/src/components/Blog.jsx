@@ -56,6 +56,7 @@ const Blog = () => {
         <form onSubmit={handleComment}>
           <input
             type="text"
+            aria-label="comment"
             value={newComment}
             onChange={({ target }) => setNewComment(target.value)}
           />

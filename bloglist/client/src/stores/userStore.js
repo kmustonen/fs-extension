@@ -2,30 +2,19 @@ import { create } from 'zustand'
 import { devtools } from 'zustand/middleware'
 import { setNotification } from './notificationStore'
 
-import blogService from '../services/blogs'
 import loginService from '../services/login'
 import userService from '../services/users'
-
-const storageKey = 'loggedBloglistappUser'
-
-const getLoggedUser = () => {
-  const loggedUserJSON = window.localStorage.getItem(storageKey)
-  if (!loggedUserJSON) return null
-  const user = JSON.parse(loggedUserJSON)
-  blogService.setToken(user.token)
-  return user
-}
+import { getUser, saveUser, removeUser } from '../services/persistentUser'
 
 const useUserStore = create(
   devtools((set) => ({
-    user: getLoggedUser(),
+    user: getUser(),
     users: [],
     actions: {
       login: async ({ username, password }) => {
         try {
           const user = await loginService.login({ username, password })
-          window.localStorage.setItem(storageKey, JSON.stringify(user))
-          blogService.setToken(user.token)
+          saveUser(user)
           set({ user })
           return true
         } catch {
@@ -34,7 +23,7 @@ const useUserStore = create(
         }
       },
       logout: () => {
-        window.localStorage.removeItem(storageKey)
+        removeUser()
         set({ user: null })
       },
       initialize: async () => {
