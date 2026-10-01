@@ -7,7 +7,7 @@ describe('<Blog />', () => {
     const createBlog = vi.fn()
     const user = userEvent.setup()
 
-    render(<BlogForm createBlog={createBlog}/>)
+    render(<BlogForm createBlog={createBlog} />)
 
     const titleInput = screen.getByLabelText('title:')
     const authorInput = screen.getByLabelText('author:')

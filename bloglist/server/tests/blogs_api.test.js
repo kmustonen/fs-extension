@@ -23,13 +23,14 @@ describe('when there are initially some blogs saved', () => {
     const savedUser = await user.save()
     userId = savedUser._id
 
-    const response = await api
-      .post('/api/login')
-      .send({ username: 'username', password: 'secret' })
+    const response = await api.post('/api/login').send({ username: 'username', password: 'secret' })
 
     token = response.body.token
 
-    const blogsWithUser = helper.initialBlogs.map(blog => ({ ...blog, user: userId }))
+    const blogsWithUser = helper.initialBlogs.map((blog) => ({
+      ...blog,
+      user: userId
+    }))
     await Blog.insertMany(blogsWithUser)
   })
 
@@ -41,17 +42,15 @@ describe('when there are initially some blogs saved', () => {
   })
 
   test('all notes are returned', async () => {
-    const response = await api
-      .get('/api/blogs')
+    const response = await api.get('/api/blogs')
 
     assert.strictEqual(response.body.length, helper.initialBlogs.length)
   })
 
   test('unique identifier property of blogs is named id', async () => {
-    const response = await api
-      .get('/api/blogs')
+    const response = await api.get('/api/blogs')
 
-    response.body.forEach(blog => {
+    response.body.forEach((blog) => {
       assert.strictEqual(typeof blog.id, 'string')
     })
   })
@@ -75,7 +74,7 @@ describe('when there are initially some blogs saved', () => {
     const blogsAtEnd = await helper.blogsInDb()
     assert.strictEqual(blogsAtEnd.length, initialBlogs.length + 1)
 
-    const titles = blogsAtEnd.map(b => b.title)
+    const titles = blogsAtEnd.map((b) => b.title)
     assert(titles.includes('Example'))
   })
 
@@ -83,7 +82,7 @@ describe('when there are initially some blogs saved', () => {
     const newBlog = {
       title: 'Example',
       author: 'Firstname Lastname',
-      url: 'google.com',
+      url: 'google.com'
     }
 
     const response = await api
@@ -138,7 +137,7 @@ describe('when there are initially some blogs saved', () => {
 
     const blogsAtEnd = await helper.blogsInDb()
 
-    const ids = blogsAtEnd.map(blog => blog.id)
+    const ids = blogsAtEnd.map((blog) => blog.id)
     assert(!ids.includes(blogToDelete.id))
 
     assert.strictEqual(blogsAtEnd.length, blogsAtStart.length - 1)
@@ -158,7 +157,7 @@ describe('when there are initially some blogs saved', () => {
     assert.strictEqual(response.body.likes, blogToUpdate.likes + 1)
 
     const blogsAtEnd = await helper.blogsInDb()
-    const updatedBlog = blogsAtEnd.find(b => b.id === blogToUpdate.id)
+    const updatedBlog = blogsAtEnd.find((b) => b.id === blogToUpdate.id)
 
     assert.deepStrictEqual(updatedBlog.likes, blogToUpdate.likes + 1)
     assert.strictEqual(blogsAtEnd.length, blogsAtStart.length)
@@ -201,10 +200,7 @@ describe('when there are initially some blogs saved', () => {
 
     const blogsAtStart = await helper.blogsInDb()
 
-    await api
-      .post('/api/blogs')
-      .send(newBlog)
-      .expect(401)
+    await api.post('/api/blogs').send(newBlog).expect(401)
 
     const blogsAtEnd = await helper.blogsInDb()
     assert.deepStrictEqual(blogsAtStart, blogsAtEnd)

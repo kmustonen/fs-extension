@@ -7,7 +7,6 @@ const app = require('../app')
 const helper = require('./test_helper')
 const User = require('../models/user')
 
-
 const api = supertest(app)
 
 describe('when there is initially one user in db', () => {
@@ -26,7 +25,7 @@ describe('when there is initially one user in db', () => {
     const newUser = {
       username: 'mluukkai',
       name: 'Matti Luukkainen',
-      password: 'salainen',
+      password: 'salainen'
     }
 
     await api
@@ -38,7 +37,7 @@ describe('when there is initially one user in db', () => {
     const usersAtEnd = await helper.usersInDb()
     assert.strictEqual(usersAtEnd.length, usersAtStart.length + 1)
 
-    const usernames = usersAtEnd.map(u => u.username)
+    const usernames = usersAtEnd.map((u) => u.username)
     assert(usernames.includes(newUser.username))
   })
 
@@ -47,7 +46,7 @@ describe('when there is initially one user in db', () => {
 
     const newUser = {
       username: 'ab',
-      password: 'salainen',
+      password: 'salainen'
     }
 
     await api.post('/api/users').send(newUser).expect(400)
@@ -61,7 +60,7 @@ describe('when there is initially one user in db', () => {
 
     const newUser = {
       name: 'nimi',
-      password: 'salainen',
+      password: 'salainen'
     }
 
     await api.post('/api/users').send(newUser).expect(400)
@@ -75,7 +74,7 @@ describe('when there is initially one user in db', () => {
 
     const newUser = {
       username: 'kayttajanimi',
-      password: 'ab',
+      password: 'ab'
     }
 
     await api.post('/api/users').send(newUser).expect(400)
@@ -89,7 +88,7 @@ describe('when there is initially one user in db', () => {
 
     const newUser = {
       username: 'kayttajanimi',
-      name: 'nimi',
+      name: 'nimi'
     }
 
     await api.post('/api/users').send(newUser).expect(400)
@@ -97,7 +96,6 @@ describe('when there is initially one user in db', () => {
     const usersAtEnd = await helper.usersInDb()
     assert.deepStrictEqual(usersAtStart, usersAtEnd)
   })
-
 })
 
 after(async () => {

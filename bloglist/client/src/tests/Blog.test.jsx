@@ -25,7 +25,12 @@ describe('<Blog />', () => {
       mockRemoveHandler = vi.fn()
 
       render(
-        <Blog blog={blog} user={null} handleLike={mockLikeHandler} handleRemove={mockRemoveHandler} />
+        <Blog
+          blog={blog}
+          user={null}
+          handleLike={mockLikeHandler}
+          handleRemove={mockRemoveHandler}
+        />
       )
     })
 
@@ -59,7 +64,12 @@ describe('<Blog />', () => {
       mockRemoveHandler = vi.fn()
 
       render(
-        <Blog blog={blog} user={testUser} handleLike={mockLikeHandler} handleRemove={mockRemoveHandler} />
+        <Blog
+          blog={blog}
+          user={testUser}
+          handleLike={mockLikeHandler}
+          handleRemove={mockRemoveHandler}
+        />
       )
     })
 
@@ -117,7 +127,12 @@ describe('<Blog />', () => {
       mockRemoveHandler = vi.fn()
 
       render(
-        <Blog blog={blog} user={anotherUser} handleLike={mockLikeHandler} handleRemove={mockRemoveHandler} />
+        <Blog
+          blog={blog}
+          user={anotherUser}
+          handleLike={mockLikeHandler}
+          handleRemove={mockRemoveHandler}
+        />
       )
     })
 

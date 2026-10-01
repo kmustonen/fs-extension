@@ -4,9 +4,7 @@ import { useState, useEffect } from 'react'
 import blogService from './services/blogs'
 import loginService from './services/login'
 
-import {
-  Routes, Route, Link, Navigate, useMatch, useNavigate
-} from 'react-router-dom'
+import { Routes, Route, Link, Navigate, useMatch, useNavigate } from 'react-router-dom'
 
 import LoginForm from './components/LoginForm'
 import Blog from './components/Blog'
@@ -29,13 +27,20 @@ const App = () => {
   })
 
   useEffect(() => {
-    blogService.getAll().then(blogs =>
-      setBlogs(blogs.sort(function (a, b) { return b.likes - a.likes })))
+    blogService.getAll().then((blogs) =>
+      setBlogs(
+        blogs.sort(function (a, b) {
+          return b.likes - a.likes
+        })
+      )
+    )
   }, [])
 
   const sendNotification = async (message, status) => {
     setMessage({ message: message, status: status })
-    setTimeout(() => { setMessage({ message: null, status: null }) }, 5000)
+    setTimeout(() => {
+      setMessage({ message: null, status: null })
+    }, 5000)
   }
 
   const handleLogin = async ({ username, password }) => {
@@ -52,7 +57,7 @@ const App = () => {
     }
   }
 
-  const handleLogout = async event => {
+  const handleLogout = async (event) => {
     event.preventDefault()
     window.localStorage.removeItem('loggedBloglistappUser')
     setUser(null)
@@ -62,7 +67,10 @@ const App = () => {
     try {
       const returnedBlog = await blogService.create(blogObject)
       setBlogs(blogs.concat({ ...returnedBlog, user }))
-      sendNotification(`a new blog ${blogObject.title} by ${blogObject.author} was added`, 'success')
+      sendNotification(
+        `a new blog ${blogObject.title} by ${blogObject.author} was added`,
+        'success'
+      )
       navigate('/')
     } catch {
       sendNotification('error in adding new blog', 'error')
@@ -73,8 +81,12 @@ const App = () => {
     blogObject = { ...blogObject, likes: blogObject.likes + 1 }
     await blogService.update(blogObject)
 
-    blogService.getAll().then(blogs =>
-      setBlogs(blogs.sort(function (a, b) { return b.likes - a.likes }))
+    blogService.getAll().then((blogs) =>
+      setBlogs(
+        blogs.sort(function (a, b) {
+          return b.likes - a.likes
+        })
+      )
     )
   }
 
@@ -83,15 +95,17 @@ const App = () => {
       await blogService.remove(blogObject)
       sendNotification(`blog ${blogObject.title} by ${blogObject.author} was removed`, 'success')
       const updatedBlogs = await blogService.getAll()
-      setBlogs(updatedBlogs.sort(function (a, b) { return b.likes - a.likes }))
+      setBlogs(
+        updatedBlogs.sort(function (a, b) {
+          return b.likes - a.likes
+        })
+      )
       navigate('/')
     }
   }
 
   const match = useMatch('/blogs/:id')
-  const blog = match
-    ? blogs.find(blog => blog.id === match.params.id)
-    : null
+  const blog = match ? blogs.find((blog) => blog.id === match.params.id) : null
 
   const style = { '&:hover': { bgcolor: 'rgba(255,255,255,0.3)' } }
 
@@ -100,11 +114,24 @@ const App = () => {
       <AppBar position="static">
         <Toolbar sx={{ justifyContent: 'space-between' }}>
           <Typography variant="h4">blog app</Typography>
-          <div><Button color="inherit" component={Link} to="/" sx={style}>home</Button>
-            {user && <Button color="inherit" component={Link} to="/create" sx={style}>new blog</Button>}
-            {!user
-              ? <Button color="inherit" component={Link} to="/login" sx={style}>login</Button>
-              : <Button color="inherit" onClick={handleLogout} sx={style}>logout</Button>}
+          <div>
+            <Button color="inherit" component={Link} to="/" sx={style}>
+              home
+            </Button>
+            {user && (
+              <Button color="inherit" component={Link} to="/create" sx={style}>
+                new blog
+              </Button>
+            )}
+            {!user ? (
+              <Button color="inherit" component={Link} to="/login" sx={style}>
+                login
+              </Button>
+            ) : (
+              <Button color="inherit" onClick={handleLogout} sx={style}>
+                logout
+              </Button>
+            )}
           </div>
         </Toolbar>
       </AppBar>
@@ -112,29 +139,21 @@ const App = () => {
         <Notification message={message.message} status={message.status} />
         <Box sx={{ p: 2 }}>
           <Routes>
-            <Route path="/" element={
-              <BlogList
-                blogs={blogs}
-                user={user} />
-            } />
-            <Route path="/login" element={
-              user
-                ? <Navigate replace to="/" />
-                : <LoginForm handleLogin={handleLogin} />
-            } />
-            <Route path="/create" element={
-              user
-                ? <BlogForm createBlog={createBlog} />
-                : <Navigate replace to="/" />
-            } />
-            <Route path="/blogs/:id" element={
-              <Blog
-                blog={blog}
-                user={user}
-                handleLike={handleLike}
-                handleRemove={handleRemove}
-              />
-            } />
+            <Route path="/" element={<BlogList blogs={blogs} user={user} />} />
+            <Route
+              path="/login"
+              element={user ? <Navigate replace to="/" /> : <LoginForm handleLogin={handleLogin} />}
+            />
+            <Route
+              path="/create"
+              element={user ? <BlogForm createBlog={createBlog} /> : <Navigate replace to="/" />}
+            />
+            <Route
+              path="/blogs/:id"
+              element={
+                <Blog blog={blog} user={user} handleLike={handleLike} handleRemove={handleRemove} />
+              }
+            />
             <Route path="/*" element={<h2>404 Page Not Found</h2>} />
           </Routes>
         </Box>

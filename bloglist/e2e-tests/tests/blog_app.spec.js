@@ -70,13 +70,13 @@ describe('Blog app', () => {
     test('a user can create a blog', async ({ page }) => {
       await createBlog(page, 'Test Title', 'Test Author', 'Test URL')
 
-      await expect(page.getByRole('link', {name: 'Test Title by Test Author'})).toBeVisible()
+      await expect(page.getByRole('link', { name: 'Test Title by Test Author' })).toBeVisible()
     })
 
     test('a user can like a blog', async ({ page }) => {
       await createBlog(page, 'Test Title', 'Test Author', 'Test URL')
       await page.getByRole('link', { name: 'Test Title by Test Author' }).click()
-      await page.getByRole('button', { name: 'like'}).click()
+      await page.getByRole('button', { name: 'like' }).click()
 
       await expect(page.getByText('1 likes')).toBeVisible()
     })
@@ -84,8 +84,8 @@ describe('Blog app', () => {
     test('a user can delete a blog', async ({ page }) => {
       await createBlog(page, 'Test Title', 'Test Author', 'Test URL')
       await page.getByRole('link', { name: 'Test Title by Test Author' }).click()
-      page.on('dialog', dialog => dialog.accept())
-      await page.getByRole('button', { name: 'delete'}).click()
+      page.on('dialog', (dialog) => dialog.accept())
+      await page.getByRole('button', { name: 'delete' }).click()
 
       await expect(page.getByRole('link', { name: 'Test Title by Test Author' })).not.toBeVisible()
     })
@@ -96,7 +96,7 @@ describe('Blog app', () => {
       await loginUser(page, 'ouser', 'password')
       await page.getByRole('link', { name: 'Test Title by Test Author' }).click()
 
-      await expect(page.getByRole('button', { name: 'delete'})).not.toBeVisible()
+      await expect(page.getByRole('button', { name: 'delete' })).not.toBeVisible()
     })
   })
 })
