@@ -2,7 +2,7 @@ import { Typography, Button, Stack, Card } from '@mui/material'
 
 const Blog = ({ blog, user, handleLike, handleRemove }) => {
 
-  if (!blog) return null
+  if (!blog) return <h2>404 Page Not Found</h2>
 
   return (
     <Card style={{ marginTop: 10, maxWidth: 600 }}>
@@ -11,7 +11,7 @@ const Blog = ({ blog, user, handleLike, handleRemove }) => {
           {blog.title}
         </Typography>
         <Typography variant='h6'>
-        by {blog.author}
+          by {blog.author}
         </Typography>
         <div>
           <a href={blog.url}>{blog.url}</a>

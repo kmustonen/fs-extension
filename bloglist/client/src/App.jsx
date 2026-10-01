@@ -135,6 +135,7 @@ const App = () => {
                 handleRemove={handleRemove}
               />
             } />
+            <Route path="/*" element={<h2>404 Page Not Found</h2>} />
           </Routes>
         </Box>
       </ErrorBoundary>
