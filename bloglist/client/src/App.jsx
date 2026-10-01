@@ -3,45 +3,30 @@ import { useEffect } from 'react'
 import { useBlogActions, useBlogs } from './stores/blogStore'
 import { useUser, useUserActions } from './stores/userStore'
 
-import { Routes, Route, Link, Navigate, useMatch, useNavigate } from 'react-router-dom'
+import { Routes, Route, Link, Navigate, useMatch } from 'react-router-dom'
 
 import LoginForm from './components/LoginForm'
 import Blog from './components/Blog'
 import BlogList from './components/BlogList'
 import BlogForm from './components/BlogForm'
+import UserList from './components/UserList'
 import Notification from './components/Notification'
 import ErrorBoundary from './components/ErrorBoundary'
 
 const App = () => {
-  const navigate = useNavigate()
-
   const user = useUser()
-  const { login, logout } = useUserActions()
-  const { initialize, create, like, remove } = useBlogActions()
+  const { login, logout, initialize: initializeUsers } = useUserActions()
+  const { initialize: initializeBlogs } = useBlogActions()
   const blogs = useBlogs()
 
   useEffect(() => {
-    initialize()
-  }, [initialize])
+    initializeBlogs()
+    initializeUsers()
+  }, [initializeBlogs, initializeUsers])
 
   const handleLogout = (event) => {
     event.preventDefault()
     logout()
-  }
-
-  const createBlog = async (blog) => {
-    if (await create(blog, user)) navigate('/')
-  }
-
-  const handleLike = async (blog) => {
-    await like(blog.id)
-  }
-
-  const handleRemove = async (blog) => {
-    if (window.confirm(`remove blog ${blog.title} by ${blog.author}`)) {
-      await remove(blog)
-      navigate('/')
-    }
   }
 
   const match = useMatch('/blogs/:id')
@@ -57,6 +42,9 @@ const App = () => {
           <div>
             <Button color="inherit" component={Link} to="/" sx={style}>
               home
+            </Button>
+            <Button color="inherit" component={Link} to="/users" sx={style}>
+              users
             </Button>
             {user && (
               <Button color="inherit" component={Link} to="/create" sx={style}>
@@ -79,21 +67,14 @@ const App = () => {
         <Notification />
         <Box sx={{ p: 2 }}>
           <Routes>
-            <Route path="/" element={<BlogList blogs={blogs} user={user} />} />
+            <Route path="/" element={<BlogList />} />
             <Route
               path="/login"
               element={user ? <Navigate replace to="/" /> : <LoginForm handleLogin={login} />}
             />
-            <Route
-              path="/create"
-              element={user ? <BlogForm createBlog={createBlog} /> : <Navigate replace to="/" />}
-            />
-            <Route
-              path="/blogs/:id"
-              element={
-                <Blog blog={blog} user={user} handleLike={handleLike} handleRemove={handleRemove} />
-              }
-            />
+            <Route path="/create" element={user ? <BlogForm /> : <Navigate replace to="/" />} />
+            <Route path="/blogs/:id" element={<Blog blog={blog} />} />
+            <Route path="/users" element={<UserList />} />
             <Route path="/*" element={<h2>404 Page Not Found</h2>} />
           </Routes>
         </Box>

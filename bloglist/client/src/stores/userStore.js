@@ -4,6 +4,7 @@ import { setNotification } from './notificationStore'
 
 import blogService from '../services/blogs'
 import loginService from '../services/login'
+import userService from '../services/users'
 
 const storageKey = 'loggedBloglistappUser'
 
@@ -18,6 +19,7 @@ const getLoggedUser = () => {
 const useUserStore = create(
   devtools((set) => ({
     user: getLoggedUser(),
+    users: [],
     actions: {
       login: async ({ username, password }) => {
         try {
@@ -34,10 +36,15 @@ const useUserStore = create(
       logout: () => {
         window.localStorage.removeItem(storageKey)
         set({ user: null })
+      },
+      initialize: async () => {
+        const users = await userService.getAll()
+        set({ users })
       }
     }
   }))
 )
 
 export const useUser = () => useUserStore((state) => state.user)
+export const useUsers = () => useUserStore((state) => state.users)
 export const useUserActions = () => useUserStore((state) => state.actions)

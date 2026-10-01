@@ -1,21 +1,27 @@
 import { Typography, TextField, Button } from '@mui/material'
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { useBlogActions } from '../stores/blogStore'
+import { useUser } from '../stores/userStore'
 
-const BlogForm = ({ createBlog }) => {
+const BlogForm = () => {
   const [newBlogTitle, setNewBlogTitle] = useState('')
   const [newBlogAuthor, setNewBlogAuthor] = useState('')
   const [newBlogUrl, setNewBlogUrl] = useState('')
+  const { create } = useBlogActions()
+  const user = useUser()
+  const navigate = useNavigate()
 
   const addBlog = async (event) => {
     event.preventDefault()
 
-    const blogObject = {
+    const blog = {
       title: newBlogTitle,
       author: newBlogAuthor,
       url: newBlogUrl
     }
 
-    createBlog(blogObject)
+    if (await create(blog, user)) navigate('/')
   }
 
   return (

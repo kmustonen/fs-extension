@@ -1,8 +1,13 @@
 import { Typography } from '@mui/material'
 
 import { Link } from 'react-router-dom'
+import { useBlogs } from '../stores/blogStore'
+import { useUser } from '../stores/userStore'
 
-const BlogList = ({ blogs, user }) => {
+const BlogList = () => {
+  const blogs = useBlogs()
+  const user = useUser()
+
   return (
     <div>
       {user && <p>{user.username} logged in</p>}
